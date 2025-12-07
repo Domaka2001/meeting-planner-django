@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="mb-8 text-center">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ meeting.title }}</h1>
+    {% if meeting.description %}
+    <p class="text-gray-600">{{ meeting.description }}</p>
+    {% endif %}
+    <p class="text-sm text-gray-400 mt-2">{{ participants.count }} uczestników zagłosowało</p>
+</div>
+
+{% if not current_participant %}
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+    <h3 class="font-semibold mb-3">Twoje imię</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" 
+               name="new_participant" 
+               placeholder="Wpisz swoje imię i naciśnij Enter..." 
+               class="w-full border border-gray-300 rounded-lg p-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition" 
+               required 
+               autofocus>
+        </form>
+    <p class="text-xs text-gray-400 mt-2">Zatwierdź klawiszem Enter, aby móc głosować.</p>
+</div>
+{% else %}
+<div class="bg-blue-50 border border-blue-100 p-4 rounded-xl mb-6 flex justify-between items-center text-blue-800">
+    <span>Głosujesz jako: <strong>{{ current_participant.name }}</strong></span>
+    <a href="?reset=1" class="text-xs underline hover:text-blue-600">Zmień</a>
+</div>
+{% endif %}
+
+<div class="space-y-4">
+    <h3 class="font-bold text-lg mb-2">Zaznacz swoją dostępność</h3>
+
+    {% for option in options %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500">
+                {% if option.type == 'date' %}
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                {% else %}
+                    <i data-lucide="map-pin" class="w-5 h-5"></i>
+                {% endif %}
+            </div>
+            <div>
+                <p class="font-semibold text-gray-900">{{ option.label }}</p>
+                <div class="flex gap-3 text-xs text-gray-400 mt-1">
+                    <span class="flex items-center gap-1 text-green-600"><i data-lucide="check" class="w-3 h-3"></i> {{ option.yes_count }}</span>
+                    <span class="flex items-center gap-1 text-red-400"><i data-lucide="x" class="w-3 h-3"></i> {{ option.no_count }}</span>
+                </div>
+            </div>
+        </div>
+
+        {% if current_participant %}
+            {% include 'partials/vote_buttons.html' with option=option participant=current_participant %}
+        {% else %}
+            <div class="opacity-40 pointer-events-none grayscale select-none" title="Wpisz imię powyżej, aby zagłosować">
+                <div class="flex gap-2">
+                    <button class="border border-gray-300 bg-white text-gray-400 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                        <i data-lucide="check" class="w-4 h-4"></i> Tak
+                    </button>
+                    <button class="border border-gray-300 bg-white text-gray-400 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                        <i data-lucide="x" class="w-4 h-4"></i> Nie
+                    </button>
+                    <button class="border border-gray-300 bg-white text-gray-400 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                        <i data-lucide="help-circle" class="w-4 h-4"></i> Może
+                    </button>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<div class="mt-8 flex gap-4">
+    <a href="{% url 'meeting_results' meeting.id %}" class="flex-1 bg-white border border-gray-300 text-gray-700 py-3 rounded-xl text-center font-medium hover:bg-gray-50 flex justify-center items-center gap-2 transition">
+        Zobacz wyniki <i data-lucide="arrow-right" class="w-4 h-4"></i>
+    </a>
+
+    <a href="{% url 'meeting_results' meeting.id %}" class="flex-1 bg-blue-600 text-white py-3 rounded-xl text-center font-medium shadow-lg hover:bg-blue-700 transition flex justify-center items-center">
+        Zapisz odpowiedź
+    </a>
+</div>
+
+{% endblock %}

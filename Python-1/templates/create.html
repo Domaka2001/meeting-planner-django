@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+    <h2 class="text-2xl font-bold text-gray-900 mb-2">Utwórz nowe spotkanie</h2>
+    <p class="text-gray-500 mb-8">Wypełnij formularz, aby utworzyć ankietę dla uczestników.</p>
+
+    <form method="POST" action="{% url 'create_meeting' %}" class="space-y-6">
+        {% csrf_token %}
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Nazwa spotkania</label>
+            <input type="text" name="title" placeholder="np. Spotkanie zespołu Q1" 
+                   class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" required>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Opis spotkania</label>
+            <textarea name="description" rows="3" placeholder="Dodaj opcjonalny opis spotkania..." 
+                      class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none transition"></textarea>
+        </div>
+
+        <hr class="border-gray-100">
+
+        <div>
+            <div class="flex justify-between items-center mb-3">
+                <label class="text-sm font-semibold text-gray-700">Terminy</label>
+                <button type="button" 
+                        hx-get="{% url 'add_option_input' %}?type=date" 
+                        hx-target="#dates-container" 
+                        hx-swap="beforeend"
+                        class="text-sm text-blue-600 font-medium hover:text-blue-800 flex items-center gap-1 border border-gray-200 px-3 py-1 rounded-lg bg-gray-50 hover:bg-white transition">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Dodaj termin
+                </button>
+            </div>
+            <div id="dates-container" class="space-y-3">
+                <div class="relative">
+                     <i data-lucide="calendar" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
+                     <input type="datetime-local" name="dates" class="w-full border border-gray-300 rounded-lg p-2.5 pl-10 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="flex justify-between items-center mb-3">
+                <label class="text-sm font-semibold text-gray-700">Lokalizacje</label>
+                <button type="button" 
+                        hx-get="{% url 'add_option_input' %}?type=location" 
+                        hx-target="#locations-container" 
+                        hx-swap="beforeend"
+                        class="text-sm text-blue-600 font-medium hover:text-blue-800 flex items-center gap-1 border border-gray-200 px-3 py-1 rounded-lg bg-gray-50 hover:bg-white transition">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Dodaj lokalizację
+                </button>
+            </div>
+            <div id="locations-container" class="space-y-3">
+                <div class="relative">
+                    <i data-lucide="map-pin" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
+                    <input type="text" name="locations" placeholder="np. Biuro główne, Sala A" class="w-full border border-gray-300 rounded-lg p-2.5 pl-10 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-all mt-6">
+            Zapisz i wygeneruj link
+        </button>
+    </form>
+</div>
+{% endblock %}
