@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="text-center mb-10">
+    <h1 class="text-3xl font-bold text-gray-900">{{ meeting.title }}</h1>
+    <p class="text-gray-500 mt-2">Podsumowanie wyników</p>
+    <div class="mt-4">
+        <a href="{% url 'meeting_detail' meeting.id %}" class="text-blue-600 hover:text-blue-800 text-sm flex items-center justify-center gap-1">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Wróć do głosowania
+        </a>
+    </div>
+</div>
+
+{% if best_option %}
+<div class="bg-green-50 border border-green-100 rounded-2xl p-6 mb-10 flex items-start gap-4">
+    <div class="bg-green-600 text-white w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+        <i data-lucide="trophy" class="w-6 h-6"></i>
+    </div>
+    <div>
+        <h2 class="text-lg font-bold text-green-900">Najlepsza opcja</h2>
+        <p class="text-xl font-medium text-gray-800 mt-1">{{ best_option.label }}</p>
+        <div class="flex gap-3 mt-3">
+             <span class="bg-green-600 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+                 <i data-lucide="check" class="w-3 h-3"></i> {{ best_option.yes_count }} Tak
+             </span>
+             <span class="bg-white border border-green-200 text-green-800 text-xs px-2 py-1 rounded flex items-center gap-1">
+                 <i data-lucide="help-circle" class="w-3 h-3"></i> {{ best_option.maybe_count }} Może
+             </span>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<h3 class="font-bold text-gray-900 mb-4">Wszystkie wyniki</h3>
+
+<div class="space-y-4">
+    {% for option in options %}
+    <div class="bg-white rounded-xl border border-gray-100 p-4 flex flex-col md:flex-row justify-between md:items-center gap-4">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400">
+                {% if option.type == 'date' %}
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                {% else %}
+                    <i data-lucide="map-pin" class="w-5 h-5"></i>
+                {% endif %}
+            </div>
+            <span class="font-medium text-gray-900">{{ option.label }}</span>
+        </div>
+
+        <div class="flex gap-2">
+            <div class="border rounded-lg px-3 py-1 text-sm flex items-center gap-1 text-green-700 bg-green-50 border-green-100" title="Tak">
+                <i data-lucide="check" class="w-3 h-3"></i> {{ option.yes_count }}
+            </div>
+            <div class="border rounded-lg px-3 py-1 text-sm flex items-center gap-1 text-yellow-700 bg-yellow-50 border-yellow-100" title="Może">
+                 <i data-lucide="help-circle" class="w-3 h-3"></i> {{ option.maybe_count }}
+            </div>
+            <div class="border rounded-lg px-3 py-1 text-sm flex items-center gap-1 text-red-700 bg-red-50 border-red-100" title="Nie">
+                 <i data-lucide="x" class="w-3 h-3"></i> {{ option.no_count }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

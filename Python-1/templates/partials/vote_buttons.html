@@ -1,0 +1,33 @@
+{% load planner_extras %}
+
+{% with vote=option|get_vote:participant %}
+<div class="flex gap-2" id="vote-option-{{ option.id }}">
+
+    <button hx-post="{% url 'vote' option.id 'yes' %}" 
+            hx-target="#vote-option-{{ option.id }}"
+            hx-swap="outerHTML"
+            class="flex-1 px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition border
+            {% if vote.choice == 'yes' %} bg-green-600 border-green-600 text-white shadow-md
+            {% else %} bg-white border-gray-200 text-gray-700 hover:bg-gray-50 {% endif %}">
+        <i data-lucide="check" class="w-4 h-4"></i> Tak
+    </button>
+
+    <button hx-post="{% url 'vote' option.id 'no' %}" 
+            hx-target="#vote-option-{{ option.id }}"
+            hx-swap="outerHTML"
+            class="flex-1 px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition border
+            {% if vote.choice == 'no' %} bg-red-600 border-red-600 text-white shadow-md
+            {% else %} bg-white border-gray-200 text-gray-700 hover:bg-gray-50 {% endif %}">
+        <i data-lucide="x" class="w-4 h-4"></i> Nie
+    </button>
+
+    <button hx-post="{% url 'vote' option.id 'maybe' %}" 
+            hx-target="#vote-option-{{ option.id }}"
+            hx-swap="outerHTML"
+            class="flex-1 px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition border
+            {% if vote.choice == 'maybe' %} bg-yellow-400 border-yellow-400 text-white shadow-md
+            {% else %} bg-white border-gray-200 text-gray-700 hover:bg-gray-50 {% endif %}">
+        <i data-lucide="help-circle" class="w-4 h-4"></i> Może
+    </button>
+</div>
+{% endwith %}
